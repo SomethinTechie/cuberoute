@@ -94,11 +94,13 @@
                                 <x-input-label for="keywords" :value="__('Keywords')" />
                                 <input name="keywords" type="text" class="ui-input" placeholder=""  value="{{ old('keywords') }}">
                             </div>
+
+                            <div class="categories" style="width: 100%;display: block;float:left"></div>
                             <div class="input-group">
                                 <x-input-label for="category" :value="__('Category')" />
-                                <select name="category_id" type="text" class="ui-input" placeholder=""  value="{{ old('category') }}">
+                                <select id="category" name="category_id" type="text" class="ui-input" placeholder=""  value="{{ old('category') }}">
                                     @foreach ($categories as $category)
-                                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                        <option value="{{ $category->name }}">{{ $category->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -135,6 +137,7 @@
     function addVariation() {
         var name = $("#vName").val()
         var value = $("#vValue").val()
+
         $('#newProductForm').append(`
                 <input name="${name}" type="hidden" class="ui-input" value="${value}">
             `)
@@ -144,4 +147,14 @@
         $("#vName").val('')
         $("#vValue").val('')
     }
+
+
+    $("#category").on('change', function() {
+        var category_id = $('#category').val()
+        console.log($(this).val())
+
+        $('.categories').append(`
+            <span class="variation-tag"><i class="bi bi-x"></i>${category_id}</div>
+        `)
+    })
 </script>
