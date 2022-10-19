@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,body {
+	background: #000!important;
+}
+.products-nav {
+	width: 100%;
+	height: 50px;
+}
