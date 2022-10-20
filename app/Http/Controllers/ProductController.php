@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
 use App\Models\Product;
 use App\Models\ProductVariation;
+use App\Models\Category;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -44,6 +45,7 @@ class ProductController extends Controller
         $productInputs = $request->only(['category_id', 'name', 'title', 'description', 'keywords']);
         $variationsInputs = $request->except(['category_id', 'name', 'title', 'description', 'keywords', '_token']);
         
+        log::info($variationsInputs);
         $request->validate([
             'category_id' => ['required', 'integer',],
             'name' => ['required', 'string', 'max:255', 'unique:products'],
@@ -59,14 +61,20 @@ class ProductController extends Controller
             'description' => $productInputs['description'],
             'keywords' => $productInputs['keywords'],
         ]);
-
+        $categoryIds = NULL;
         foreach ($variationsInputs as $id => $value) {
-            ProductVariation::create([
-                'product_id' => $product->id,
-                'variationName' => $id,
-                'value' => $value,
-            ]);
-        }
+            if (is_int($id)) {
+                $categoryIds = $categoryIds.'0'.$id;
+            } else {
+                ProductVariation::create([
+                    'product_id' => $product->id,
+                    'variationName' => $id,
+                    'value' => $value,
+                ]);
+
+            }        }
+        $product->category_id = '0'.$categoryIds.'0';
+        $product->save();
 
         return redirect('dashboard/product/create');
     }
@@ -80,18 +88,20 @@ class ProductController extends Controller
     public function show($id)
     {
         $product = Product::find($id);
-        $sameCategoryProducts = Product::where('category_id', $product->category_id)
+        $sameCategoryProducts = Product::where('category_id', 'LIKE',  '%'.$product->category_id.'%')
            ->orderBy('name')
            ->whereNotIn('id', [$product->id])
            ->take(5)
            ->get();
+
+        $categories = Category::where('id', 'LIKE',  '%'.$product->category_id.'%')->get();
 
         $productVariations = ProductVariation::where('product_id', $product->id)
            ->orderBy('variationName')
            ->take(5)
            ->get();
 
-        return view('products.show', ['product' => $product, 'sameCategoryProducts' => $sameCategoryProducts, 'productVariations' => $productVariations]);
+        return view('products.show', ['product' => $product, 'sameCategoryProducts' => $sameCategoryProducts, 'productVariations' => $productVariations, 'categories' => $categories]);
     }
 
     /**
@@ -109,12 +119,14 @@ class ProductController extends Controller
            ->take(5)
            ->get();
 
+        $categories = Category::where('id', 'LIKE',  '%'.'6'.'%')->get();
+
         $productVariations = ProductVariation::where('product_id', $product->id)
            ->orderBy('variationName')
            ->take(5)
            ->get();
 
-        return view('products.edit', ['product' => $product, 'sameCategoryProducts' => $sameCategoryProducts, 'productVariations' => $productVariations]);
+        return view('products.edit', ['product' => $product, 'sameCategoryProducts' => $sameCategoryProducts, 'productVariations' => $productVariations, 'categories' => $categories]);
     }
 
     /**
@@ -137,8 +149,10 @@ class ProductController extends Controller
         $product->keywords = $productInputs['keywords'];
         $product->save();
 
-        $product->category->name = $categoryInput['category_name'];
-        $product->category->save();
+        if ($categoryInput) {
+            $product->category->name = $categoryInput['category_name'];
+            $product->category->save();
+        }
         
         // //Edit variations
         foreach ($variationInputs as $id => $value) {

@@ -63,7 +63,7 @@ class CategoryController extends Controller
     public function show($id)
     {
         $categories = DB::table('categories')->get();
-        $categoryProducts = Product::where('category_id', $id)
+        $categoryProducts = Product::where('category_id', 'LIKE',  '%'.$id.'%')
            ->orderBy('name')
            ->take(10)
            ->get();

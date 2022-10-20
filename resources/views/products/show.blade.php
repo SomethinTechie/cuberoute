@@ -106,7 +106,16 @@
                 </div>
                 <div class="product-img"></div>
                 <div class="product-details">
-                    <div class="title"><h1 style="font-size: 30px;">{{ $product->name }}</h1><small class="pc">{{ $product->category->name }}</small></div>
+                    <div class="title"><h1 style="font-size: 30px;">{{ $product->name }}</h1>
+                        <small class="pc">
+                            @if(count($categories) > 0)
+                                @foreach($categories as $category)
+                                    {{ $category->name }}
+                                @endforeach
+                            @else
+                            @endif
+                        </small>
+                    </div>
                     <div class="variants-nav">
                         @if (count($productVariations) > 0)
                             @foreach($productVariations as $variation)

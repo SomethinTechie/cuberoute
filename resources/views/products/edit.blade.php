@@ -134,8 +134,14 @@
                             <h3 class="" style="width: 100%;padding: 20px 0;margin-top: 20px;font-weight: bolder;">Product Category</h3>
 
                             <div class="input-group">
-                                <x-input-label for="category" :value="__('Category name')" />
-                                <input name="category_name" type="text" class="ui-input" value="{{ $product->category->name }}">
+                                @if(count($categories) > 0)
+                                    <x-input-label for="category" :value="__('Category name')" />
+                                    @foreach($categories as $category)
+                                        <input name="category_name" type="text" class="ui-input" value="{{ $category->name }}">
+                                    @endforeach
+                                @else
+                                    <p style="width: 100%;float: left;margin-bottom: 30px;">No catagory</p>
+                                @endif
                             </div>
                         </div>
                         <div class="form-group mt-4">

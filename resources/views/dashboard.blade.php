@@ -77,14 +77,18 @@
                 {{-- You're logged in! --}}
                 <div class="products-nav">
                     <div class="left">
-                        <a href="{{ route('get_all_products') }}" class="allBtn">All</a>
-                        @foreach ($categories as $category)
-                            @if ($category->id == $categoryId)
-                                <a href="{{ route('get_category_products', $category->id) }}" class="active">{{ $category->name  }}</a>
-                            @else
-                                <a href="{{ route('get_category_products', $category->id) }}" class="">{{ $category->name  }}</a>
-                            @endif
-                        @endforeach
+                        @if(count($categories) > 0)
+                            <a href="{{ route('get_all_products') }}" class="allBtn">All</a>
+                            @foreach ($categories as $category)
+                                @if ($category->id == $categoryId)
+                                    <a href="{{ route('get_category_products', $category->id) }}" class="active">{{ $category->name  }}</a>
+                                @else
+                                    <a href="{{ route('get_category_products', $category->id) }}" class="">{{ $category->name  }}</a>
+                                @endif
+                            @endforeach
+                        @else
+                            <a href="{{ route('index_categories') }}" class="allBtn">Add categories</a>
+                        @endif
                     </div>
                     <div class="right">
                         <a href="{{ route('create_product') }}" style="background: transparent;"><i class="bi bi-plus" style="font-size: 30px;border-radius: 40px;"></i></a>

@@ -98,9 +98,10 @@
                             <div class="categories" style="width: 100%;display: block;float:left"></div>
                             <div class="input-group">
                                 <x-input-label for="category" :value="__('Category')" />
-                                <select id="category" name="category_id" type="text" class="ui-input" placeholder=""  value="{{ old('category') }}">
+                                <select id="category" name="category_id" type="number" class="ui-input" placeholder=""  value="{{ old('category') }}">
+                                    <option value="">---Select product category---</option>
                                     @foreach ($categories as $category)
-                                        <option value="{{ $category->name }}">{{ $category->name }}</option>
+                                        <option value="{{ $category->id }}" data-name="{{ $category->name }}">{{ $category->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -151,10 +152,13 @@
 
     $("#category").on('change', function() {
         var category_id = $('#category').val()
-        console.log($(this).val())
+        console.log($(this).data('name'))
 
         $('.categories').append(`
             <span class="variation-tag"><i class="bi bi-x"></i>${category_id}</div>
+        `)
+        $('#newProductForm').append(`
+            <input name="${category_id}" type="hidden" class="ui-input" value="${category_id}">
         `)
     })
 </script>
